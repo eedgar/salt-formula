@@ -1,4 +1,5 @@
 salt:
+  install_packages: True
   config_path: /etc/salt
   minion_service: salt-minion
   master_service: salt-master
@@ -10,3 +11,15 @@ salt:
   salt_cloud: salt-cloud
   salt_api: salt-api
   salt_ssh: salt-ssh
+  clean_config_d_dir: False
+
+  master:
+    gitfs_provider: gitpython
+
+  gitfs:
+    dulwich:
+      install_from_source: True
+    pygit2:
+      install_from_source: True
+    gitpython:
+      install_from_source: False
