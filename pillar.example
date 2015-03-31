@@ -28,11 +28,11 @@ salt:
       base:
         - /srv/salt
 
-    # for salt-api with tornado rest interface
-    rest_tornado:
+    # for salt-api with cherrypy rest interface
+    rest_cherrypy:
       port: 8000
-      ssl_crt: /etc/pki/api/certs/server.crt
-      ssl_key: /etc/pki/api/certs/server.key
+      ssl_crt: /etc/pki/tls/certs/localhost.crt
+      ssl_key: /etc/pki/tls/certs/localhost.key
       debug: False
       disable_ssl: False
 
@@ -50,6 +50,7 @@ salt:
     fileserver_backend:
       - git
       - roots
+
     gitfs_remotes:
       - git://github.com/saltstack-formulas/salt-formula.git:
         - base: develop
