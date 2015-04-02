@@ -3,5 +3,5 @@
 yubikey_python:
 {% if salt_settings.yubikey_python %}
   pkg.installed:
-    - name: {{ yubikey_python }}
+    - name: {{ salt_settings.yubikey_python }}
 {% endif %}
