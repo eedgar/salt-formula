@@ -5,3 +5,11 @@ yubikey_python:
   pkg.installed:
     - name: {{ salt_settings.yubikey_python }}
 {% endif %}
+
+python-pip:
+  pkg.installed
+
+yubico-client:
+  pip.installed:
+    - require:
+      - pkg: python-pip
