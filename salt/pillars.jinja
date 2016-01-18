@@ -1,0 +1,49 @@
+{% set defaults = {
+    'baseurl': 'https://github.com/saltstack-pillars',
+    'basedir': '/srv/pillars',
+    'update': False,
+    'options': {},
+   }
+%}
+{% set pillars = salt['pillar.get']('salt_pillars:list', {}) %}
+
+{%- macro pillars_git_opt(env, opt) -%}
+{%- set value = salt['pillar.get']('salt_pillars:git_opts:{0}:{1}'.format(env, opt),
+     salt['pillar.get']('salt_pillars:git_opts:default:{0}'.format(opt),
+       defaults[opt])) -%}
+{{ value|yaml }}
+{%- endmacro -%}
+
+{%- macro pillars_roots(env) -%}
+{%- set value = [] -%}
+{%- for dir in pillars.get(env, []) -%}
+{%- set basedir = pillars_git_opt(env, 'basedir')|load_yaml -%}
+{%- do value.append('{0}/{1}'.format(basedir, dir)) -%}
+{%- endfor -%}
+{{ value|yaml }}
+{%- endmacro -%}
+
+{# Generate file_roots config merging standard salt config and list of
+   enabled pillars #}
+{%- macro file_roots(input) -%}
+{%- set processed_envs = [] -%}
+file_roots:
+{%- for name, roots in input|dictsort -%}
+{%- do processed_envs.append(name) %}
+  {{ name }}:
+{%- for dir in roots %}
+    - {{ dir }}
+{%- endfor -%}
+{%- for dir in pillars_roots(name)|load_yaml %}
+    - {{ dir }}
+{%- endfor -%}
+{%- endfor -%}
+{%- for name in pillars -%}
+{%- if name not in processed_envs %}
+  {{ name }}:
+{%- for dir in pillars_roots(name)|load_yaml %}
+    - {{ dir }}
+{%- endfor -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
