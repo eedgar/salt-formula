@@ -13,6 +13,7 @@ salt-minion:
     - exclude_pat: _*
     - context:
         standalone: False
+{% if salt_settings.start_services %}
   service.running:
     - enable: True
     - name: {{ salt_settings.minion_service }}
@@ -22,6 +23,7 @@ salt-minion:
 {% endif %}
       - file: salt-minion
       - file: remove-old-minion-conf-file
+{% endif %}
 
 # clean up old _defaults.conf file if they have it around
 remove-old-minion-conf-file:
